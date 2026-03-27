@@ -92,3 +92,48 @@ git clone https://github.com/constanceardiles2-dotcom/Coherence-First-Architectu
 cd Coherence-First-Architecture
 pip install -r requirements.txt
 python main.py
+## How It Maps to the Paper
+
+This implementation follows the architecture described in Figure 1 of the preprint.
+
+| Paper Component | Description | Code Mapping |
+|----------------|------------|-------------|
+| SET (Exploration) | Candidate signal generation from input stream | `inputs` loop in `run_simulation()` |
+| General Proxy | Signal evaluation using coherence, goodness, and noise | `coherence()`, `goodness()`, `compute_noise()`, `frequency()` |
+| Interaction Core *(Proposed)* | Coupling between internal state and external input | `similarity(x, state)` used in coherence calculation |
+| Goodness Memory G(t) | Tracks alignment over time | `history` list (frequency tracking) |
+| Decision Resolution Operator | Maps evaluations to discrete actions | `decision(freq)` |
+| State Update (Attractor Dynamics) | Gradual convergence toward accepted signals | `update_state()` |
+| Feedback Loop | Updates internal state and historical memory | `state` update + `history.append(freq)` |
+
+---
+
+## Mathematical Correspondence
+
+The implementation approximates the following:
+
+- **Frequency metric**  
+  \[
+  F(x) = \frac{\text{coherence}(x) \cdot \text{goodness}(x)}{\text{noise}}
+  \]
+
+- **Decision rule**  
+  \[
+  \mathcal{R}(F) \rightarrow \{\text{ACCEPT, CAUTIOUS, REJECT}\}
+  \]
+
+- **State update**  
+  \[
+  x_{t+1} = (1 - \alpha)x_t + \alpha x_{\text{new}}
+  \]
+
+---
+
+## Notes
+
+- The current implementation is a minimal prototype  
+- The interaction model \(B(t) = x_I(t) \times x_E(t)\) is represented implicitly through similarity computations  
+- Future work will include:
+  - batch-level hypergeometric filtering  
+  - dynamic threshold adaptation  
+  - integer-buffered noise estimation  
