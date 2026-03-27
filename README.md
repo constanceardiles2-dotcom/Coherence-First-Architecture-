@@ -137,3 +137,12 @@ The implementation approximates the following:
   - batch-level hypergeometric filtering  
   - dynamic threshold adaptation  
   - integer-buffered noise estimation  
+A minimal, executable implementation of a coherence-first architecture for adaptive, decision-regulated AI systems.
+## Preprint
+
+Coming soon.
+## Repository Structure
+
+- `main.py` — prototype implementation  
+- `requirements.txt` — dependencies  
+- `README.md` — documentation  
