@@ -91,7 +91,8 @@ MIT License
 git clone https://github.com/constanceardiles2-dotcom/Coherence-First-Architecture
 cd Coherence-First-Architecture
 pip install -r requirements.txt
-python main.py```
+python main.py
+```
 
 ## How It Maps to the Paper
 
