@@ -86,14 +86,12 @@ MIT License
 ## Quick Start
 
 ### 1. Clone the repository
+
 ```bash
-git clone https://github.com/...
+git clone https://github.com/constanceardiles2-dotcom/Coherence-First-Architecture
 cd Coherence-First-Architecture
 pip install -r requirements.txt
 python main.py
-```
-
-## How It Maps to the Paper
 ## How It Maps to the Paper
 
 This implementation follows the architecture described in Figure 1 of the preprint.
