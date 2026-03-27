@@ -1,0 +1,110 @@
+# Coherence-First Architecture Prototype
+# Minimal working implementation aligned with Figure 1
+
+import numpy as np
+from sentence_transformers import SentenceTransformer
+from scipy.spatial.distance import cosine
+
+# ----------------------------
+# MODEL
+# ----------------------------
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+
+def embed(text):
+    return model.encode(text)
+
+
+def similarity(a, b):
+    return 1 - cosine(a, b)
+
+
+# ----------------------------
+# CORE METRICS
+# ----------------------------
+
+def coherence(x, state):
+    return similarity(x, state)
+
+
+def goodness(x, goal):
+    return similarity(x, goal)
+
+
+def compute_noise(history):
+    if len(history) < 2:
+        return 0.1
+    return np.var(history)
+
+
+def frequency(coh, good, noise):
+    return (coh * good) / (noise + 1e-6)
+
+
+# ----------------------------
+# DECISION OPERATOR
+# ----------------------------
+
+def decision(freq):
+    if freq > 0.6:
+        return "ACCEPT"
+    elif freq > 0.3:
+        return "CAUTIOUS"
+    else:
+        return "REJECT"
+
+
+# ----------------------------
+# STATE UPDATE
+# ----------------------------
+
+def update_state(state, current, alpha=0.3):
+    return (1 - alpha) * state + alpha * current
+
+
+# ----------------------------
+# SIMULATION
+# ----------------------------
+
+def run_simulation(inputs, goal_text):
+    state = embed("initial state")
+    goal = embed(goal_text)
+
+    history = []
+
+    for text in inputs:
+        x = embed(text)
+
+        coh = coherence(x, state)
+        good = goodness(x, goal)
+        noise = compute_noise(history)
+
+        freq = frequency(coh, good, noise)
+        dec = decision(freq)
+
+        print(f"\nInput: {text}")
+        print(f"Coherence: {coh:.3f} | Goodness: {good:.3f} | Noise: {noise:.3f}")
+        print(f"Frequency: {freq:.3f} → Decision: {dec}")
+
+        if dec == "ACCEPT":
+            state = update_state(state, x)
+
+        history.append(freq)
+
+
+# ----------------------------
+# EXAMPLE RUN
+# ----------------------------
+
+if __name__ == "__main__":
+    inputs = [
+        "optimize system performance",
+        "random noise input",
+        "align with goal state",
+        "irrelevant distraction",
+        "refine coherence and stability"
+    ]
+
+    goal = "improve coherence and stability"
+
+    run_simulation(inputs, goal)
