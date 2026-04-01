@@ -24,12 +24,12 @@ The system consists of the following components:
 ### • SET (Exploration Layer)
 Active sampling of candidate signals from external input.
 
-### • General Proxy (Regulation Layer)
+### • General Proxy (Core Evaluation)
 Evaluates signal quality using:
-- coherence-based frequency metric  
-- adaptive thresholds  
-- batch-level probabilistic confidence (hypergeometric)  
-- quantized noise estimation  
+- coherence (aligment with current state)  
+- goodness (aligment with goal)  
+- noise (variance of signal history)  
+- frequency = (coherence x goodness)/noise
 
 ### • Interaction Core *(Proposed – theoretical grounding)*
 Behavior is modeled as the coupling between internal state and external context:
@@ -37,13 +37,104 @@ Behavior is modeled as the coupling between internal state and external context:
 Tracks alignment over time and stabilizes adaptation.
 
 ### • Decision Resolution Operator
-Maps evaluations into:
-- ACCEPT  
-- CAUTIOUS  
-- REJECT  
+Three-state Operartor:
+- ACCEPT → Update state
+- CAUTIOUS → defer gather/more info 
+- REJECT → discard input 
 
-### • State Update (Attractor Dynamics)
-Ensures gradual convergence rather than abrupt transitions.
+### • State Update
+x(t+1) = (1 − α)x(t) + αx_new
+- gradual adaptation
+- avoids abrupt changes
+
+### • Dynamical Interpretation
+We introduce a regime indicator (Re_c) that characterizes system behavior under varying noise and alignment conditions.
+
+Re_c = (activity × noise) / (goodness + ε)
+
+- Low Re_c → stable regime (consistent decisions)
+- Medium Re_c → transitional regime (CAUTIOUS)
+- High Re_c → unstable regime (higher rejection)
+
+## *Variational Interpretation (Proposed)
+
+To provide a unified perspective on regulation and adaptation, we introduce a variational interpretation of the architecture. This formulation is not intended as a physical model, but as an optimization-based view of system behavior under uncertainty.
+
+### Cognitive Lagrangian
+
+We define a cognitive Lagrangian:
+
+L = C(ψ_I, ψ_E) − λ_N · N − λ_D · (1 − G)
+
+Where:
+
+- ψ_I: internal state representation  
+- ψ_E: external input embedding  
+- C(ψ_I, ψ_E): coherence (e.g., cosine similarity)  
+- N: signal variability (noise)  
+- G ∈ [0,1]: goodness-in-fit (alignment with goal)  
+- λ_N, λ_D: weighting coefficients  
+
+This formulation captures the trade-off between alignment (coherence), noise suppression, and goal-directed behavior.
+
+---
+
+### Dynamical Interpretation
+
+Assuming a differentiable approximation:
+
+- C(ψ_I, ψ_E) ≈ ψ_I · ψ_E  
+- G ≈ ψ_I · ψ_goal  
+
+We obtain a gradient-based evolution rule:
+
+dψ_I/dt ≈ ∇ψ_I L
+
+Which yields:
+
+dψ_I/dt ≈ ψ_E + λ_D · ψ_goal
+
+This suggests that the internal state evolves toward a balance between external input and goal alignment, while implicitly constrained by noise and regulation terms.
+
+---
+
+### Relation to Implementation
+
+In the current prototype, this variational view is approximated through discrete updates:
+
+x(t+1) = (1 − α) x(t) + α x_new
+
+Where:
+
+- α acts as a learning rate (step size)  
+- x_new reflects filtered external input  
+
+The evaluation components:
+
+- coherence (C)  
+- goodness (G)  
+- noise (N)  
+
+are computed explicitly and used in decision-making and regulation.
+
+---
+
+### Interpretation
+
+This perspective suggests that the system performs a form of regulated optimization:
+
+- maximizing alignment between internal and external states  
+- minimizing instability due to noise  
+- maintaining consistency with long-term goals  
+
+Rather than relying solely on scale, the architecture introduces explicit mechanisms for controlling how the system evolves over time.
+
+---
+
+### Status
+
+This variational formulation is **proposed** and serves as a theoretical interpretation of the implemented system. Future work will explore its empirical validation and potential extensions.
+
 
 ### • Feedback System
 Updates:
@@ -55,37 +146,28 @@ Updates:
 
 ## Implementation
 
-A working prototype demonstrates:
+A working prototype was implemented in Python using:
 
-- semantic embedding-based evaluation  
-- adaptive thresholding  
-- quantized noise estimation  
-- probabilistic batch filtering  
-- stable state evolution  
+- sentence-transformers (semantic embeddings)
+- numpy (numerical operations)
+- scipy (similarity metrics)
 
+The system computes coherence, goodness, noise, and decision outcomes in real time.
+
+## Results/Observations
+
+Initial experiments show:
+
+- stable inputs → more ACCEPT decisions
+- noisy inputs → increased CAUTIOUS / REJECT
+- Re_c correlates with behavioral regimes
+
+These results suggest that explicit regulation improves consistency and interpretability.
 ---
 
-## Goals
-
-- Improve behavioral stability in AI systems  
-- Enable controlled decision-making under uncertainty  
-- Complement scale with coherence-based regulation  
-
----
-
-## Status
-
-Early research implementation accompanying a preprint.
-
----
-
-## Citation
+## Preprint
 
 Coming soon.
-
----
-
-## License
 
 MIT License
 ## Quick Start
