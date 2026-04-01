@@ -9,7 +9,12 @@ This repository contains an initial implementation and research framework for a 
 Modern AI systems scale effectively but often lack mechanisms to regulate the **quality and stability of behavior over time**.
 
 This project introduces a **coherence-first architecture** that integrates exploration, evaluation, memory, and adaptive decision-making within a closed-loop system.
+Current AI systems can exhibit unstable or inconsistent outputs under noisy or ambiguous inputs. These behaviors are difficult to interpret and control, especially in high-stakes environments.
 
+The challenge is to design a system that:
+- Evaluates input quality explicitly
+- Regulates decisions under uncertainty
+- Maintains stable behavior over time
 ---
 
 ## Architecture
