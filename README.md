@@ -1,4 +1,4 @@
-# Coherence-First Architecture for Adaptive AI Systems
+# Coherence-First Architecture for Adaptive AI Systems© 2026 Rommy Constance Ardiles-Lee. All rights reserved.
 
 This repository contains an initial implementation and research framework for a coherence-first architecture designed to regulate behavior, stability, and decision-making in AI systems operating under continuous input.
 
